@@ -21,3 +21,11 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+h2/db.mv.db
+h2/db.trace.db
+h2/test-db.mv.db
+h2/test-db.trace.db
+/.gradle/
+/build/
+/.idea/

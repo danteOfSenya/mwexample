@@ -1,0 +1,17 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="0.0.1.0001.1" author="marcin.wroblewski">
+        <createTable tableName="api_call" remarks="API call table">
+            <column name="LOGIN" type="varchar2(50)" remarks="User login">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_api_call"/>
+            </column>
+            <column name="REQUEST_COUNT" type="bigint" defaultValueNumeric="0" remarks="Request counter">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

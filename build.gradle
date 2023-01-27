@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.2'
+    id 'application'
+    id 'groovy'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group 'org.example'
+version '0.0.1'
+
+apply plugin: 'groovy'
+apply plugin: 'io.spring.dependency-management'
+
+ext {
+    appName = "mwempik"
+    groovyVersion = '3.0.13'
+    spockVersion = '2.3-groovy-3.0'
+    springVersion = '3.0.2'
+    liquibaseVersion = '4.17.2'
+    lombokVersion = '1.18.24'
+    log4JVersion = '2.17.0'
+    postgresqlVersion = '42.5.1'
+    springdocVersion = '2.0.2'
+    junitJupiterVersion = '5.9.0'
+    h2Version = '1.4.199'
+    gsonVersion = '2.8.6'
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+compileGroovy.groovyOptions.configurationScript = file('gradle/config/groovyc.groovy')
+
+configurations.all {
+    resolutionStrategy {
+        eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.codehaus.groovy') {
+                details.useVersion(groovyVersion)
+            }
+            if (details.requested.group == 'org.apache.logging.log4j') {
+                details.useVersion(log4JVersion)
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation "org.codehaus.groovy:groovy-all:$groovyVersion"
+    implementation "org.codehaus.groovy:groovy:$groovyVersion"
+    implementation "org.codehaus.groovy:groovy-templates:$groovyVersion"
+    implementation "org.codehaus.groovy:groovy-json:$groovyVersion"
+    implementation "org.codehaus.groovy:groovy-dateutil:$groovyVersion"
+
+    implementation "org.springframework.boot:spring-boot-starter-actuator:$springVersion"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa:$springVersion"
+    implementation "org.springframework.boot:spring-boot-starter-web:$springVersion"
+    implementation "org.springframework.boot:spring-boot-starter-validation:$springVersion"
+    implementation "org.springframework.boot:spring-boot-devtools:$springVersion"
+
+    implementation "com.h2database:h2:$h2Version"
+    implementation "org.liquibase:liquibase-core:$liquibaseVersion"
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$springdocVersion"
+
+    implementation "com.google.code.gson:gson:$gsonVersion"
+
+    implementation "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    testImplementation "org.spockframework:spock-core:$spockVersion"
+    testImplementation "org.spockframework:spock-spring:$spockVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testImplementation("org.springframework.boot:spring-boot-starter-test:$springVersion") {
+        exclude group: "com.vaadin.external.google", module: "android-json"
+    }
+}
+
+test {
+    useJUnitPlatform {
+        filter.excludeTestsMatching('*IntegrationSpec*')
+    }
+}
+
+task integrationTest(type: Test) {
+    useJUnitPlatform {
+        filter.includeTestsMatching('*IntegrationSpec*')
+    }
+    description = 'Runs integration tests.'
+    group = 'verification'
+    shouldRunAfter test
+}
